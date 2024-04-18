@@ -11,7 +11,7 @@ type Coordinates []float64
 // Observation is a data point (float64 between 0.0 and 1.0) in n dimensions
 type Observation interface {
 	Coordinates() Coordinates
-	Distance(point Coordinates) float64
+	Distance(obs Observation) float64
 }
 
 // Observations is a slice of observations
@@ -24,10 +24,10 @@ func (c Coordinates) Coordinates() Coordinates {
 }
 
 // Distance returns the euclidean distance between two coordinates
-func (c Coordinates) Distance(p2 Coordinates) float64 {
+func (c Coordinates) Distance(o2 Observation) float64 {
 	var r float64
 	for i, v := range c {
-		r += math.Pow(v-p2[i], 2)
+		r += math.Pow(v-o2.Coordinates()[i], 2)
 	}
 	return r
 }
@@ -59,7 +59,7 @@ func AverageDistance(o Observation, observations Observations) float64 {
 	var l int
 
 	for _, observation := range observations {
-		dist := o.Distance(observation.Coordinates())
+		dist := o.Distance(observation)
 		if dist == 0 {
 			continue
 		}
